@@ -1,25 +1,19 @@
-'use client';
-import { useEffect, useState } from 'react';
+export const metadata = {
+  title: 'Home',
+};
 
-export default function Page() {
-  // 데이터를 fetch하는 동안 아무것도 안보임 방지
-  const [isLoading, setIsLoading] = useState(true);
+const URL = 'https://nomad-movies.nomadcoders.workers.dev/movies';
 
-  const [movies, setMovies] = useState([]);
-  const getMovies = async () => {
-    const response = await fetch(
-      'https://nomad-movies.nomadcoders.workers.dev/movies'
-    );
-    const json = await response.json();
-    setMovies(json);
-    setIsLoading(false);
-  };
-  useEffect(() => {
-    getMovies();
-  }, []);
-  return (
-    <div>
-      <main>{isLoading ? 'Loading...' : JSON.stringify(movies)}</main>
-    </div>
-  );
+async function getMovies() {
+  // loading 상태를 만들기 위해 의도적으로 5초를 기다리는 코드
+  await new Promise((resolve) => setTimeout(resolve, 5000));
+
+  const response = await fetch(URL);
+  const json = await response.json();
+  return json;
+}
+
+export default async function HomePage() {
+  const movies = await getMovies();
+  return <main>{JSON.stringify(movies)}</main>;
 }
